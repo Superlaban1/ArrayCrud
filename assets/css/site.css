@@ -1,0 +1,10 @@
+#header{
+    color: orange;
+
+}
+
+#list-s {
+    border: solid 3px;
+    border-color: orange;
+    margin: 3vw;
+}
