@@ -1,16 +1,18 @@
-//#region model
 let myDataArray = 
 [
     { date: "2024-01-01", wish: "Toyota Supra" },
     { date: "2026-10-07", wish: "Being good at Tekken" }
 ];
-//mit data
+localStorage.setItem("wish", JSON.stringify(myDataArray))
+const stored = localStorage.getItem("wish");
+const myDataArray = JSON.parse(stored);
+console.log(myDataArray);
 function createData(newWish) {
     let newEntry = { date: "2024-05-22", wish: newWish };
     myDataArray.push(newEntry);
     return "ok";
 }
-//skaber data
+
 function readData(index) {
     let data = myDataArray[index];
     if (data === undefined) 
@@ -19,7 +21,7 @@ function readData(index) {
         }
     return data;
 }
-//læser data
+
 function updateData(index, updatedWish) {
     if (myDataArray[index] !== undefined) 
         {
@@ -28,7 +30,7 @@ function updateData(index, updatedWish) {
         }
     return "error: index not found";
 }
-//opdatere data
+
 function deleteData(index) {
     if (myDataArray[index] !== undefined) 
         {
@@ -38,40 +40,31 @@ function deleteData(index) {
     return "error: index not found";
 }
 
-function findesOnske(newWish) {
-  const normalized = newWish.trim().toLowerCase();
-  // toLowerCase gør så "ko" og "Ko" vil tælle som det samme ønske, så den læser altid min string i lower case (små bugstaver)
-  return myDataArray.some(function (item) {
-    return item.wish.trim().toLowerCase() === normalized;
-  });
-}
 
 
-//sletter data
-//#endregion
 
-//#region view static
+//#region model
 function readerStatic(appID){
     let appContainer = document.getElementById(appID)
     
-    const myHeader=document.createElement("header");
-    myHeader.className="myHeader";
-    appContainer.appendChild(myHeader);
     //H1 STUFF
     const myHeadLine=document.createElement("h1")
     myHeadLine.innerText="Ønske List"
+    myHeadLine.id="header"
     appContainer.appendChild(myHeadLine);
 
+    //#ENDREGION
     //INPUT SECTION STUFF
     const inputSection=document.createElement("section")
     const input=document.createElement("input")
     inputSection.id="ips"
-    input.id="ip" 
+    input.id="ip"
     appContainer.appendChild(inputSection)
     inputSection.appendChild(input)
     // BUTTON STUFF
     const addbutton=document.createElement("button")
     addbutton.innerText="add"
+    addbutton.id="abtn"
     inputSection.appendChild(addbutton)
 
     addbutton.addEventListener("click", newWishCallBack);
@@ -84,79 +77,49 @@ function readerStatic(appID){
     
 
 }
-//#endregion
 
-//#region view dynamic
 function readerDynamic(){
     const listSection = document.getElementById("list-s");
     listSection.innerHTML = "";
 
-    //updates the visual list
     myDataArray.forEach((entry, index) => {
         const wishItem = document.createElement("article");
+        wishItem.className = "wish-item";
 
         const dateText = document.createElement("span");
-        dateText.className = "date"; 
+        dateText.className = "date";
         dateText.innerText = entry.date;
 
         const wishText = document.createElement("span");
         wishText.className = "wish";
         wishText.innerText = entry.wish;
 
-        const editBTN = document.createElement("button");
-        editBTN.className = "edit";
-        editBTN.innerText = "Edit Wish";
-        editBTN.addEventListener("click", () => EditCallBack(index));
-
         const removeBTN = document.createElement("button");
         removeBTN.className = "trash";
         removeBTN.innerText = "Remove Wish";
-        removeBTN.addEventListener("click", () => DeleteCallBack(index));
+
+        removeBTN.addEventListener("click", DeleteCallBack);
 
         wishItem.appendChild(dateText);
         wishItem.appendChild(wishText);
-        wishItem.appendChild(editBTN);
-        wishItem.appendChild(removeBTN);
+        wishText.appendChild(removeBTN);
         listSection.appendChild(wishItem);
     });
 }
-//#endregion
 
-//#region controller
 function newWishCallBack(){
         const input = document.getElementById("ip");
         const newWish = input.value;
+
         if (newWish !== "") {
-
-            if (findesOnske(newWish)) {
-            alert("Ønsket findes allerede");
-            return;
-            }
-
             createData(newWish);
             readerDynamic();
         }
-        
 }
-
-function EditCallBack(index){
-    const currentWish = readData(index);
-
-    if (currentWish !== undefined) {
-        const updatedWish = prompt("Edit wish:", currentWish.wish);
-
-        if (updatedWish !== null && updatedWish !== "") {
-            updateData(index, updatedWish);
-            readerDynamic();
-        }
-    }
-}
-
-//add and delete function
 function DeleteCallBack(index){
         deleteData(index);
         readerDynamic();
 }
-//#endregion 
+
 readerStatic("appID");
 readerDynamic();
