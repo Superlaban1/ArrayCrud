@@ -7,6 +7,8 @@ localStorage.setItem("wish", JSON.stringify(myDataArray))
 const stored = localStorage.getItem("wish");
 const myDataArray = JSON.parse(stored);
 console.log(myDataArray);
+//mit data
+//delete this comment in other branch
 function createData(newWish) {
     let newEntry = { date: "2024-05-22", wish: newWish };
     myDataArray.push(newEntry);
