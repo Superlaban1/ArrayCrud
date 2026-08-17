@@ -5,6 +5,7 @@ let myDataArray =
     { date: "2026-10-07", wish: "Being good at Tekken" }
 ];
 //mit data
+//delete this comment in other branch
 function createData(newWish) {
     let newEntry = { date: "2024-05-22", wish: newWish };
     myDataArray.push(newEntry);
