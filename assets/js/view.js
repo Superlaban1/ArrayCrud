@@ -37,6 +37,16 @@ function deleteData(index) {
         }
     return "error: index not found";
 }
+
+function findesOnske(newWish) {
+  const normalized = newWish.trim().toLowerCase();
+  // toLowerCase gør så "ko" og "Ko" vil tælle som det samme ønske, så den læser altid min string i lower case (små bugstaver)
+  return myDataArray.some(function (item) {
+    return item.wish.trim().toLowerCase() === normalized;
+  });
+}
+
+
 //sletter data
 //#endregion
 
@@ -44,23 +54,24 @@ function deleteData(index) {
 function readerStatic(appID){
     let appContainer = document.getElementById(appID)
     
+    const myHeader=document.createElement("header");
+    myHeader.className="myHeader";
+    appContainer.appendChild(myHeader);
     //H1 STUFF
     const myHeadLine=document.createElement("h1")
     myHeadLine.innerText="Ønske List"
-    myHeadLine.id="header"
     appContainer.appendChild(myHeadLine);
 
     //INPUT SECTION STUFF
     const inputSection=document.createElement("section")
     const input=document.createElement("input")
     inputSection.id="ips"
-    input.id="ip"
+    input.id="ip" 
     appContainer.appendChild(inputSection)
     inputSection.appendChild(input)
     // BUTTON STUFF
     const addbutton=document.createElement("button")
     addbutton.innerText="add"
-    addbutton.id="abtn"
     inputSection.appendChild(addbutton)
 
     addbutton.addEventListener("click", newWishCallBack);
@@ -83,24 +94,28 @@ function readerDynamic(){
     //updates the visual list
     myDataArray.forEach((entry, index) => {
         const wishItem = document.createElement("article");
-        wishItem.className = "wish-item";
 
         const dateText = document.createElement("span");
-        dateText.className = "date";
+        dateText.className = "date"; 
         dateText.innerText = entry.date;
 
         const wishText = document.createElement("span");
         wishText.className = "wish";
         wishText.innerText = entry.wish;
 
+        const editBTN = document.createElement("button");
+        editBTN.className = "edit";
+        editBTN.innerText = "Edit Wish";
+        editBTN.addEventListener("click", () => EditCallBack(index));
+
         const removeBTN = document.createElement("button");
         removeBTN.className = "trash";
         removeBTN.innerText = "Remove Wish";
-
         removeBTN.addEventListener("click", () => DeleteCallBack(index));
 
         wishItem.appendChild(dateText);
         wishItem.appendChild(wishText);
+        wishItem.appendChild(editBTN);
         wishItem.appendChild(removeBTN);
         listSection.appendChild(wishItem);
     });
@@ -111,12 +126,32 @@ function readerDynamic(){
 function newWishCallBack(){
         const input = document.getElementById("ip");
         const newWish = input.value;
-
         if (newWish !== "") {
+
+            if (findesOnske(newWish)) {
+            alert("Ønsket findes allerede");
+            return;
+            }
+
             createData(newWish);
             readerDynamic();
         }
+        
 }
+
+function EditCallBack(index){
+    const currentWish = readData(index);
+
+    if (currentWish !== undefined) {
+        const updatedWish = prompt("Edit wish:", currentWish.wish);
+
+        if (updatedWish !== null && updatedWish !== "") {
+            updateData(index, updatedWish);
+            readerDynamic();
+        }
+    }
+}
+
 //add and delete function
 function DeleteCallBack(index){
         deleteData(index);
