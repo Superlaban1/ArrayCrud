@@ -64,7 +64,6 @@ function readerStatic(appID){
     // BUTTON STUFF
     const addbutton=document.createElement("button")
     addbutton.innerText="add"
-    addbutton.id="abtn"
     inputSection.appendChild(addbutton)
 
     addbutton.addEventListener("click", newWishCallBack);
@@ -77,6 +76,7 @@ function readerStatic(appID){
     
 
 }
+//#endregion
 
 function readerDynamic(){
     const listSection = document.getElementById("list-s");
