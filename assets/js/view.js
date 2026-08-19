@@ -4,21 +4,33 @@ let myDataArray =
     { date: "2024-01-01", wish: "Toyota Supra" },
     { date: "2026-10-07", wish: "Being good at Tekken" }
 ];
-localStorage.setItem("wish", JSON.stringify(myDataArray));
-
 const stored = localStorage.getItem("wish");
-const myLocalData = JSON.parse(stored);
-console.log(myLocalData);
 
+if (stored !== null) {
+    myDataArray = JSON.parse(stored);
+} else {
+    localStorage.setItem("wish", JSON.stringify(myDataArray));
+}
+
+function tjekLogin(inputUsername, inputPassword){
+    const username = "Mikkel"
+    const password = "3010"
+
+    if (inputUsername === username && inputPassword === password) {
+        return "ok";
+    }
+
+    return "error";
+}
 function saveToStorage() {
-    localStorage.setItem("wishes", JSON.stringify(myDataArray));
+    localStorage.setItem("wish", JSON.stringify(myDataArray));
 }
 
 //mit data
 function createData(newWish) {
     let newEntry = { date: "2024-05-22", wish: newWish };
     myDataArray.push(newEntry);
-    saveToStorage
+    saveToStorage();
     return "ok";
 }
 //skaber data
@@ -36,7 +48,7 @@ function updateData(index, updatedWish) {
     if (myDataArray[index] !== undefined) 
         {
             myDataArray[index].wish = updatedWish;
-            saveToStorage
+            saveToStorage();
             return "ok";
         }
     return "error: index not found";
@@ -46,7 +58,7 @@ function deleteData(index) {
     if (myDataArray[index] !== undefined) 
         {
             myDataArray.splice(index, 1);
-            saveToStorage
+            saveToStorage();
             return "ok";
         }
     return "error: index not found";
@@ -75,6 +87,20 @@ function readerStatic(appID){
     const myHeadLine=document.createElement("h1")
     myHeadLine.innerText="Ønske List"
     appContainer.appendChild(myHeadLine);
+
+    const userLogin=document.createElement("section")
+    userLogin.id="loginSection"
+    const usernameInput=document.createElement("input")
+    const passwordInput=document.createElement("input")
+    usernameInput.id="userID"
+    passwordInput.id="passID"
+    const loginbtn=document.createElement("button")
+    loginbtn.innerText="Login"
+    loginbtn.addEventListener("click", checkLogin)
+    appContainer.appendChild(userLogin)
+    userLogin.appendChild(usernameInput)
+    userLogin.appendChild(passwordInput)
+    userLogin.appendChild(loginbtn)
 
     //INPUT SECTION STUFF
     const inputSection=document.createElement("section")
@@ -166,11 +192,38 @@ function EditCallBack(index){
     }
 }
 
+function checkLogin(){
+    const usernameInput = document.getElementById("userID");
+    const passwordInput = document.getElementById("passID");
+    const loginResult = tjekLogin(usernameInput.value, passwordInput.value);
+
+    if (loginResult === "ok") {
+        document.cookie = "loggedIn=true; max-age=86400; path=/";
+        checkLoginCookie();
+    }
+
+    return loginResult;
+}
+
 //add and delete function
 function DeleteCallBack(index){
         deleteData(index);
         readerDynamic();
 }
+
+function checkLoginCookie(){
+    const hasLoginCookie = document.cookie.includes("loggedIn=true");
+    const appContainer = document.getElementById("appID");
+    appContainer.innerHTML = "";
+    readerStatic("appID");
+
+    if (hasLoginCookie) {
+        document.getElementById("loginSection").style.display = "none";
+        readerDynamic();
+    } else {
+        document.getElementById("ips").style.display = "none";
+        document.getElementById("list-s").style.display = "none";
+    }
+}
 //#endregion 
-readerStatic("appID");
-readerDynamic();
+checkLoginCookie();
